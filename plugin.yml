@@ -1,7 +1,7 @@
 name: IOBookcase
-main: com.lonelydime.IOBookcase.IOBookcase
-version: 1.31
-website: https://github.com/lonelydime
-author: lonelydime
+main: de.minehattan.uripura.IOBookcase.IOBookcase
+version: 0.1
+website: https://github.com/Uripura
+author: Uripura (Forked from lonelydime)
 description: >
              Allows players to read/write from bookcases.
