@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -80,7 +81,8 @@ public class IOBookcaseBlockListener extends BlockListener {
 			handleImport(player, block, sign, firstLine, bufferText.toString());
 
 		} else
-			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
+			player.sendMessage(ChatColor.RED
+					+ plugin.getConfig().getString("msg-error-format"));
 	}
 
 	public void onBlockBreak(BlockBreakEvent event) {
@@ -88,33 +90,63 @@ public class IOBookcaseBlockListener extends BlockListener {
 		boolean checkcase = false;
 		String worldName = event.getPlayer().getWorld().getName();
 
-		if (block.getType() == Material.BOOKSHELF && !event.isCancelled()) {
-			IOBookcaseDatabase connection = new IOBookcaseDatabase();
+		if (block.getType() != Material.BOOKSHELF || event.isCancelled())
+			return;
 
-			try {
-				int x = event.getBlock().getX();
-				int y = event.getBlock().getY();
-				int z = event.getBlock().getZ();
+		IOBookcaseDatabase connection = new IOBookcaseDatabase();
 
-				checkcase = connection.checkCase(worldName, x, y, z);
+		try {
+			int x = event.getBlock().getX();
+			int y = event.getBlock().getY();
+			int z = event.getBlock().getZ();
 
-				if (checkcase) {
-					connection.deleteCase(worldName, x, y, z);
-					event.getPlayer().sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-notify-deleted"));
+			checkcase = connection.checkCase(worldName, x, y, z);
 
-				}
-				if (plugin.getConfig().getBoolean("drop-bookcase")) {
-					// Drop a Bookcase for the player
-					block.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.BOOKSHELF, 1));
-				}
-			} catch (Exception e) {
-				System.out.println("delete fail: " + e);
+			if (checkcase) {
+				connection.deleteCase(worldName, x, y, z);
+				event.getPlayer().sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-notify-deleted"));
+
+			}
+			if (plugin.getConfig().getBoolean("drop-bookcase")) {
+				// We cancel the event and drop a normal bookcase
+				event.setCancelled(true);
+				block.setType(Material.AIR);
+				block.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.BOOKSHELF, 1));
+			}
+		} catch (Exception e) {
+			System.out.println("delete fail: " + e);
+		}
+
+	}
+
+	public void onBlockBurn(BlockBurnEvent event) {
+		Block block = event.getBlock();
+		boolean checkcase = false;
+		String worldName = block.getWorld().getName();
+		
+		if (block.getType() != Material.BOOKSHELF || event.isCancelled())
+			return;
+		
+		IOBookcaseDatabase connection = new IOBookcaseDatabase();
+
+		try {
+			int x = event.getBlock().getX();
+			int y = event.getBlock().getY();
+			int z = event.getBlock().getZ();
+
+			checkcase = connection.checkCase(worldName, x, y, z);
+
+			if (checkcase) {
+				connection.deleteCase(worldName, x, y, z);
 			}
 
+		} catch (Exception e) {
+			System.out.println("delete fail: " + e);
 		}
 	}
 
-	private void handleLine(Player player, Block block, Block sign, String firstLine, String otherLines) {
+	private void handleLine(Player player, Block block, Block sign,
+			String firstLine, String otherLines) {
 		// Linenumber in the bookcase
 		int lineNum = 1;
 		// Color of the line (default = white)
@@ -135,21 +167,23 @@ public class IOBookcaseBlockListener extends BlockListener {
 			// If it's bigger than 1 we probably got a line number
 			// if(firstLineString[1])
 			// Character.isNumber(firstLineString[1]);
-			if(isIntNumber(firstLineString[1])) {
+			if (isIntNumber(firstLineString[1])) {
 				lineNum = Integer.parseInt(firstLineString[1]);
-			}
-			else {
-				player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
+			} else {
+				player.sendMessage(ChatColor.RED
+						+ plugin.getConfig().getString("msg-error-format"));
 				return;
 			}
-			
+
 			if (firstLineString.length > 2) {
 				// If it's bigger than 2 we got an additional color
 				firstLineString[2] = firstLineString[2].toLowerCase();
 				lineColor = getColor(firstLineString[2], player);
 			}
 		} else {
-			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-to-few-arguments"));
+			player.sendMessage(ChatColor.RED
+					+ plugin.getConfig()
+							.getString("msg-error-to-few-arguments"));
 			return;
 		}
 
@@ -161,18 +195,23 @@ public class IOBookcaseBlockListener extends BlockListener {
 			 * The text is safe to be send to the database
 			 */
 			IOBookcaseDatabase connection = new IOBookcaseDatabase();
-			connection.writeSql(textToWrite, lineNum, worldName, block.getX(), block.getY(), block.getZ());
-			player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-written") + " " + lineNum);
+			connection.writeSql(textToWrite, lineNum, worldName, block.getX(),
+					block.getY(), block.getZ());
+			player.sendMessage(ChatColor.YELLOW
+					+ plugin.getConfig().getString("msg-notify-written") + " "
+					+ lineNum);
 
 			// Delete the sign and give it back to the player
 			giveSignBack(player, sign);
 
 		} else
-			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
+			player.sendMessage(ChatColor.RED
+					+ plugin.getConfig().getString("msg-error-lines"));
 
 	}
 
-	private void handleImport(Player player, Block bookcase, Block sign, String firstLine, String otherLines) {
+	private void handleImport(Player player, Block bookcase, Block sign,
+			String firstLine, String otherLines) {
 		// import from text file
 		if (firstLine.contains("@import")) {
 			// String sentCaseName = event.getLine(1);
@@ -196,10 +235,12 @@ public class IOBookcaseBlockListener extends BlockListener {
 			IOBookcaseDatabase connection = new IOBookcaseDatabase();
 			String lineColor = "§f";
 			//
-			String[] casetext = { null, null, null, null, null, null, null, null, null, null };
+			String[] casetext = { null, null, null, null, null, null, null,
+					null, null, null };
 
 			try {
-				BufferedReader br = new BufferedReader(new FileReader(importFile));
+				BufferedReader br = new BufferedReader(new FileReader(
+						importFile));
 
 				while ((line = br.readLine()) != null) {
 					// opening <case> tag
@@ -209,9 +250,11 @@ public class IOBookcaseBlockListener extends BlockListener {
 						indexoflinenum = indexoflinenum + 6;
 
 						if (indexoflinenum > -1) {
-							fileCaseName = line.substring(indexoflinenum, line.indexOf("\"", indexoflinenum));
+							fileCaseName = line.substring(indexoflinenum,
+									line.indexOf("\"", indexoflinenum));
 							// player.sendMessage("casename: "+fileCaseName);
-							// the case they entered on the sign matches the one we
+							// the case they entered on the sign matches the one
+							// we
 							// have in the file
 							if (sentCaseName.matches(fileCaseName)) {
 								foundCase = true;
@@ -219,7 +262,8 @@ public class IOBookcaseBlockListener extends BlockListener {
 							}
 							// not this cases' name, move on
 						} else {
-							// if the case does not have a name attribute in the import
+							// if the case does not have a name attribute in the
+							// import
 							// file
 							player.sendMessage("Could not find the case's name, make sure your format is correct");
 						}
@@ -227,7 +271,8 @@ public class IOBookcaseBlockListener extends BlockListener {
 						insidetag = true;
 					} // end if <case
 
-					// set the insidetag flag to false if we've reached the closing
+					// set the insidetag flag to false if we've reached the
+					// closing
 					// case tag
 					else if (insidetag && line.contains("</case>")) {
 						// player.sendMessage("Looking for </case>");
@@ -244,13 +289,17 @@ public class IOBookcaseBlockListener extends BlockListener {
 							indexoflinenum = line.indexOf("num=\"");
 							indexoflinenum = indexoflinenum + 5;
 							if (indexoflinenum > -1) {
-								indexnum = Integer.parseInt(line.substring(indexoflinenum, line.indexOf("\"", indexoflinenum)));
-								indexnum = indexnum - 1; // convert line number to java
-																	// array index
+								indexnum = Integer.parseInt(line.substring(
+										indexoflinenum,
+										line.indexOf("\"", indexoflinenum)));
+								indexnum = indexnum - 1; // convert line number
+															// to java
+															// array index
 								// player.sendMessage("Reading line "+(indexnum+1));
 								insideline = true;
 							} else
-								// if the case does not have a name attribute in the
+								// if the case does not have a name attribute in
+								// the
 								// import file
 								player.sendMessage("Could not find the line's number, make sure your format is correct");
 
@@ -258,10 +307,13 @@ public class IOBookcaseBlockListener extends BlockListener {
 							indexoflinenum = line.indexOf("color=\"");
 							indexoflinenum = indexoflinenum + 7;
 							if (indexoflinenum > -1) {
-								// private String getColor(String colorName, Player
+								// private String getColor(String colorName,
+								// Player
 								// player)
 
-								importlinecolor = line.substring(indexoflinenum, line.indexOf("\"", indexoflinenum));
+								importlinecolor = line.substring(
+										indexoflinenum,
+										line.indexOf("\"", indexoflinenum));
 
 								lineColor = getColor(importlinecolor, player);
 
@@ -269,22 +321,26 @@ public class IOBookcaseBlockListener extends BlockListener {
 						}
 					}
 
-					else if (insideline && !line.contains("</line>") && foundCase && !line.contains("</case>")) {
+					else if (insideline && !line.contains("</line>")
+							&& foundCase && !line.contains("</case>")) {
 						// player.sendMessage("Looking for <line> contents: "+fileCaseName);
 						if (indexnum > -1 && indexnum < 10) {
 							casetext[indexnum] = lineColor + line.trim();
 							// player.sendMessage("Line "+(indexnum+1)+": "+line.trim());
 						} else {
-							player.sendMessage("The line number " + indexnum + " is not between 1 and 10.");
+							player.sendMessage("The line number " + indexnum
+									+ " is not between 1 and 10.");
 						}
 					}
 
-					else if (insideline && line.contains("</line>") && foundCase) {
+					else if (insideline && line.contains("</line>")
+							&& foundCase) {
 						// player.sendMessage("Looking for </line>");
 						insideline = false;
 					}
 
-					// we are inside a case tag that was not matched, do nothing.
+					// we are inside a case tag that was not matched, do
+					// nothing.
 					else {
 						// player.sendMessage("No action required");
 					}
@@ -293,14 +349,17 @@ public class IOBookcaseBlockListener extends BlockListener {
 				int i = 0;
 
 				if (casetext[0] == null) {
-					player.sendMessage("The case with name " + sentCaseName + " was not found.");
+					player.sendMessage("The case with name " + sentCaseName
+							+ " was not found.");
 				} else {
 
 					checkcase = connection.checkCase(worldName, x, y, z);
 
 					if (checkcase) {
 						connection.deleteCase(worldName, x, y, z);
-						player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-notify-deleted"));
+						player.sendMessage(ChatColor.RED
+								+ plugin.getConfig().getString(
+										"msg-notify-deleted"));
 
 					}
 
@@ -309,16 +368,20 @@ public class IOBookcaseBlockListener extends BlockListener {
 					int j;
 					for (j = 1, i = 0; i < 10; i++, j++) {
 						if (casetext[i] != null) {
-							//player.sendMessage(casetext[i] + ", " + j + ", " + worldName + ", " + bookcase.getY());
-							connection.writeSql(casetext[i], j, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
-							
+							// player.sendMessage(casetext[i] + ", " + j + ", "
+							// + worldName + ", " + bookcase.getY());
+							connection.writeSql(casetext[i], j, worldName,
+									bookcase.getX(), bookcase.getY(),
+									bookcase.getZ());
+
 						}
 					}
 
-					player.sendMessage("lines written to the case " + bookcase.getX() + "," + bookcase.getY() + ","
+					player.sendMessage("lines written to the case "
+							+ bookcase.getX() + "," + bookcase.getY() + ","
 							+ bookcase.getZ());
 				}
-				
+
 				// somehow this works...
 				// connection.writeSql("test", 5, "minehattan", 11, 21, 31);
 
@@ -397,7 +460,8 @@ public class IOBookcaseBlockListener extends BlockListener {
 		// WHITE
 		else {
 			// if a wrong color is passed we set the default to white
-			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-color"));
+			player.sendMessage(ChatColor.RED
+					+ plugin.getConfig().getString("msg-error-color"));
 		}
 		return "§f";
 	}

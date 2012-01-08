@@ -28,7 +28,8 @@ public class IOBookcase extends JavaPlugin {
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Highest, this);
+		pm.registerEvent(Event.Type.BLOCK_BURN, blockListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener, Priority.Monitor, this);
 
 		this.pluginDirPath = this.getDataFolder().getAbsolutePath();
