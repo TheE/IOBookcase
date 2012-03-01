@@ -4,13 +4,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
 
 import de.minehattan.uripura.IOBookcase.IOBookcase;
 import de.minehattan.uripura.IOBookcase.IOBookcaseDatabase;
 
-public class IOBookcasePlayerListener extends PlayerListener {
+public class IOBookcasePlayerListener implements Listener {
 
 	// private IOBookcaseReborn plugin;
 
