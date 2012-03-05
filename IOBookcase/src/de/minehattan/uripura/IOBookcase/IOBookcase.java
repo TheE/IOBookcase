@@ -21,11 +21,13 @@ public class IOBookcase extends JavaPlugin {
 
 		PluginManager pm = this.getServer().getPluginManager();
 		/*
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Highest, this);
-		pm.registerEvent(Event.Type.BLOCK_BURN, blockListener, Priority.Monitor, this);
-		pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener, Priority.Monitor, this);
-		*/
+		 * pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener,
+		 * Priority.Monitor, this); pm.registerEvent(Event.Type.BLOCK_BREAK,
+		 * blockListener, Priority.Highest, this);
+		 * pm.registerEvent(Event.Type.BLOCK_BURN, blockListener,
+		 * Priority.Monitor, this); pm.registerEvent(Event.Type.SIGN_CHANGE,
+		 * blockListener, Priority.Monitor, this);
+		 */
 		pm.registerEvents(this.blockListener, this);
 		pm.registerEvents(this.playerListener, this);
 
@@ -33,9 +35,9 @@ public class IOBookcase extends JavaPlugin {
 		this.configFile = new File(this.pluginDirPath + File.separator + "config.yml");
 		this.config = new IOBookcaseConfig(this.configFile);
 
-		if(!checkFile())
+		if (!checkFile())
 			createFile();
-		if(!checkDatabase())
+		if (!checkDatabase())
 			createDatabase();
 
 		this.logMessage("Enabeld");
@@ -58,14 +60,13 @@ public class IOBookcase extends JavaPlugin {
 	private void createDatabase() {
 		this.logMessage("bookcase.db does not exist. Creating...");
 		IOBookcaseDatabase database = new IOBookcaseDatabase();
-		if(database.createDatabase()) {
+		if (database.createDatabase()) {
 			this.logMessage("Database created!");
-		}
-		else
+		} else
 			this.logMessage("Cannot create Database!");
-		
+
 	}
-	
+
 	private void createFile() {
 
 		File importFile = new File(getDataFolder() + File.separator + "import.xml");
@@ -81,7 +82,7 @@ public class IOBookcase extends JavaPlugin {
 			System.out.println("Cannot create File " + importFile.getPath() + File.separator + "import.xml");
 		}
 	}
-	
+
 	private boolean checkDatabase() {
 
 		File importcase = new File(getDataFolder() + File.separator + "bookcase.db");

@@ -10,6 +10,7 @@ public class IOBookcaseConfig {
 
 	private YamlConfiguration config;
 	private HashMap<String, Object> configDefaults = new HashMap<String, Object>();
+
 	public IOBookcaseConfig(File cFile) {
 		this.config = new YamlConfiguration();
 
@@ -18,6 +19,7 @@ public class IOBookcaseConfig {
 		this.configDefaults.put("msg-empty-bookcase", "This bookcase is empty.");
 		this.configDefaults.put("msg-notify-written", "Text written to line");
 		this.configDefaults.put("msg-notify-deleted", "Bookcase unregistered.");
+		this.configDefaults.put("msg-notify-found", "Bookcase was imported.");
 		this.configDefaults.put("msg-error-lines", "Only lines 1-10 allowed.");
 		this.configDefaults.put("msg-error-format", "The format is @line linenumber [color]");
 		this.configDefaults.put("msg-error-exeption", "Failed to write:");
@@ -42,7 +44,6 @@ public class IOBookcaseConfig {
 		}
 	}
 
-
 	public int getInt(String key) {
 		if (this.configDefaults.containsKey(key) == false)
 			return 0;
@@ -55,7 +56,6 @@ public class IOBookcaseConfig {
 		return this.config.getBoolean(key, (Boolean) this.configDefaults.get(key));
 	}
 
-	
 	public String getString(String key) {
 		if (this.configDefaults.containsKey(key) == false)
 			return "";

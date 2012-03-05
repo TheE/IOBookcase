@@ -30,7 +30,7 @@ public class IOBookcaseBlockListener implements Listener {
 	public IOBookcaseBlockListener(IOBookcase instance) {
 		this.plugin = instance;
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onSignChange(SignChangeEvent event) {
 		// Stores the first line of the sign
@@ -79,8 +79,7 @@ public class IOBookcaseBlockListener implements Listener {
 		} else if (firstLine.contains("@import")) {
 			handleImport(player, block, sign, firstLine, bufferText.toString());
 		} else
-			player.sendMessage(ChatColor.RED
-					+ plugin.getConfig().getString("msg-error-format"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -108,7 +107,7 @@ public class IOBookcaseBlockListener implements Listener {
 			}
 			if (plugin.getConfig().getBoolean("drop-bookcase")) {
 				// We cancel the event and drop a normal bookcase
-				
+
 				event.setCancelled(true);
 				block.setType(Material.AIR);
 				block.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.BOOKSHELF, 1));
@@ -124,10 +123,10 @@ public class IOBookcaseBlockListener implements Listener {
 		Block block = event.getBlock();
 		boolean checkcase = false;
 		String worldName = block.getWorld().getName();
-		
+
 		if (block.getType() != Material.BOOKSHELF || event.isCancelled())
 			return;
-		
+
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
 
 		try {
@@ -146,8 +145,7 @@ public class IOBookcaseBlockListener implements Listener {
 		}
 	}
 
-	private void handleLine(Player player, Block block, Block sign,
-			String firstLine, String otherLines) {
+	private void handleLine(Player player, Block block, Block sign, String firstLine, String otherLines) {
 		// Linenumber in the bookcase
 		int lineNum = 1;
 		// Color of the line (default = white)
@@ -162,11 +160,11 @@ public class IOBookcaseBlockListener implements Listener {
 		firstLineString = firstLine.split(" ");
 
 		/*
-		 * Format: @line NUMBER [COLOR_AS_STRING]
-		 * If the array contains more than 1 string we probably got a line number
+		 * Format: @line NUMBER [COLOR_AS_STRING] If the array contains more
+		 * than 1 string we probably got a line number
 		 */
 		if (firstLineString.length > 1) {
-			
+
 			// Check whether this string is numeric or not
 			if (isIntNumber(firstLineString[1])) {
 				lineNum = Integer.parseInt(firstLineString[1]);
@@ -174,15 +172,14 @@ public class IOBookcaseBlockListener implements Listener {
 				player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
 				return;
 			}
-			
+
 			// If it's bigger than 2 we got an additional color
 			if (firstLineString.length > 2) {
 				firstLineString[2] = firstLineString[2].toLowerCase();
 				lineColor = getColor(firstLineString[2], player);
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ plugin.getConfig().getString("msg-error-to-few-arguments"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-to-few-arguments"));
 			return;
 		}
 
@@ -194,93 +191,112 @@ public class IOBookcaseBlockListener implements Listener {
 			 * The text is safe to be send to the database
 			 */
 			IOBookcaseDatabase connection = new IOBookcaseDatabase();
-			connection.writeSql(textToWrite, lineNum, worldName, block.getX(),
-					block.getY(), block.getZ());
-			player.sendMessage(ChatColor.YELLOW
-					+ plugin.getConfig().getString("msg-notify-written") + " "
-					+ lineNum);
+			connection.writeSql(textToWrite, lineNum, worldName, block.getX(), block.getY(), block.getZ());
+			player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-written") + " " + lineNum);
 
 			// Delete the sign and give it back to the player
 			giveSignBack(player, sign);
 
 		} else
-			player.sendMessage(ChatColor.RED
-					+ plugin.getConfig().getString("msg-error-lines"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
 
 	}
 
 	private void handleImport(Player player, Block bookcase, Block sign, String firstLine, String otherLines) {
+		// String that is send to the database
+		String textToWrite;
+		// Name of the current world
+		String worldName = player.getWorld().getName();
+		// To find out if the import was successful
+		Boolean found = false;
+		
 		// import from text file
 		if (firstLine.contains("@import")) {
 
 			try {
 				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-	            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-				Document doc = docBuilder.parse (plugin.getDataFolder() + File.separator + "import.xml");
+				DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+				Document doc = docBuilder.parse(plugin.getDataFolder() + File.separator + "import.xml");
 
-            // normalize text representation
-            doc.getDocumentElement ().normalize ();
+				// normalize text representation
+				doc.getDocumentElement().normalize();
 
-            NodeList cases = doc.getElementsByTagName("case");
-            
-            int numberOfCases = cases.getLength();
-            //System.out.println("So viele Case-dinger : " + numberOfCases);
-            //System.out.println ("Root element: " + doc.getDocumentElement().getNodeName());
-			
-            for(int i=0; i < numberOfCases; i++) {
-            	
-            	Node firstPersonNode = cases.item(i);
-                
-            	if(firstPersonNode.getNodeType() == Node.ELEMENT_NODE) {
+				NodeList cases = doc.getElementsByTagName("case");
 
-                    Element firstPersonElement = (Element)firstPersonNode;
-                    
-                    //-------
-                    NodeList caseLineList = firstPersonElement.getElementsByTagName("line");
-                    
-                    
-                 // Attribute
-                	if(firstPersonElement.hasAttributes()) {
-                		NamedNodeMap attrs = firstPersonElement.getAttributes();
-                		for(int u = 0 ; u<attrs.getLength() ; u++) {
-                	        Attr attribute = (Attr)attrs.item(u);     
-                	        //System.out.println("Attribut: " + attribute.getName() + " = "+attribute.getValue());
-                	        
-                	        String blah1, blah2;
-                	        blah1 = attribute.getValue();
-                	        blah2 = otherLines;
-                	        
-                	        player.sendMessage("wert: '" + blah1 + "'");
-                	        player.sendMessage("otherlines: '" + blah2 + "'");
-                	        
-                	        if(blah1.equals(blah2)) {
-                	        	player.sendMessage(ChatColor.RED + "Case wurde gefunden!");                	        	
-                	        }
-                	      }
-                	}
-                	// attribute
-                    
-                    for(int k=0; k < caseLineList.getLength(); k++) {
-                    	
-                        Element firstNameElement = (Element)caseLineList.item(k);
+				int numberOfCases = cases.getLength();
+				// System.out.println("Number of cases present : " + numberOfCases);
+				// System.out.println ("Root element: " + doc.getDocumentElement().getNodeName());
 
-                        NodeList text = firstNameElement.getChildNodes();
-                        
-                        System.out.println("Line" + k + ": " + ((Node)text.item(0)).getNodeValue().trim());
-                        
-                        // Attribute
-                    	if(firstNameElement.hasAttributes()) {
-                    		NamedNodeMap attrs = firstNameElement.getAttributes();
-                    		for(int u = 0 ; u<attrs.getLength() ; u++) {
-                    	        Attr attribute = (Attr)attrs.item(u);     
-                    	        System.out.println("Attribut: " + attribute.getName() + " = "+attribute.getValue());
-                    	      }
-                    	}
-                    	// attribute
-                    }              
-                }            	
-            }
-			
+				for (int i = 0; i < numberOfCases; i++) {
+
+					Node caseNode = cases.item(i);
+
+					if (caseNode.getNodeType() == Node.ELEMENT_NODE) {
+
+						Element caseElement = (Element) caseNode;
+
+						NodeList caseLineList = caseElement.getElementsByTagName("line");
+
+						String name = "";
+
+						// Attribute in which the name of the case is stored
+						if (caseElement.hasAttributes()) {
+							NamedNodeMap attrs = caseElement.getAttributes();
+							for (int u = 0; u < attrs.getLength(); u++) {
+								Attr attribute = (Attr) attrs.item(u);
+								name = attribute.getValue();
+							}
+						}
+
+						for (int k = 0; k < caseLineList.getLength(); k++) {
+
+							Element caseLine = (Element) caseLineList.item(k);
+							NodeList text = caseLine.getChildNodes();
+
+							// Get the text thats in the line
+							String txtLine = ((Node) text.item(0)).getNodeValue().trim();
+
+							// Get all attributes that are in the line element
+							if (caseLine.hasAttributes()) {
+								NamedNodeMap attrs = caseLine.getAttributes();
+
+								// Just to initialize the variables
+								int lineNum = 1;
+								String txtColor = "";
+								
+								if (otherLines.equals(name)) {
+									for (int u = 0; u < attrs.getLength(); u++) {
+										Attr attribute = (Attr) attrs.item(u);
+
+										// Search for the num and color
+										if (attribute.getName().equals("num")) {
+											if (isIntNumber(attribute.getValue())) {
+												lineNum = Integer.parseInt(attribute.getValue());
+											}
+										} else if (attribute.getName().equals("color")) {
+											txtColor = attribute.getValue();
+										}
+									}
+									
+									textToWrite = getColor(txtColor, player) + txtLine;
+									
+									IOBookcaseDatabase connection = new IOBookcaseDatabase();
+									connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
+									
+									player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-found"));
+									
+									found = true;
+								}
+							}
+						}
+					}
+				}
+				if (found == false) {
+					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-error-import"));
+				}
+				// Delete the sign and give it back to the player
+				giveSignBack(player, sign);
+
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (SAXException e) {
@@ -288,7 +304,6 @@ public class IOBookcaseBlockListener implements Listener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			giveSignBack(player, sign);
 		}
 	}
 

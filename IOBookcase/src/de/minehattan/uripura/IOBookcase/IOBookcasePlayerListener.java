@@ -25,17 +25,16 @@ public class IOBookcasePlayerListener implements Listener {
 
 		// Check if the player is actually interacting with a bookcase
 		// Also if the player holds a block we don't want to display text
-		if(event.isCancelled() || block.getType() != Material.BOOKSHELF)
+		if (event.isCancelled() || block.getType() != Material.BOOKSHELF)
 			return;
-		
+
 		if (player.hasPermission("iobookcase.read") == false)
 			return;
-		
+
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
-		if(connection.checkCase(worldName, block.getX(), block.getY(), block.getZ())) {
+		if (connection.checkCase(worldName, block.getX(), block.getY(), block.getZ())) {
 			connection.readCase(player, worldName, block.getX(), block.getY(), block.getZ());
-		}
-		else
+		} else
 			player.sendMessage(ChatColor.RED + "This bookcase is empty.");
 	}
 }

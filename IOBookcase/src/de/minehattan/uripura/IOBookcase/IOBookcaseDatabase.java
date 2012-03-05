@@ -42,8 +42,7 @@ public class IOBookcaseDatabase {
 
 		try {
 			statement = connection.createStatement();
-			rs = statement.executeQuery("SELECT `line1` FROM `bookshelf` WHERE `world`='" + worldName + "' AND `locx` ="
-					+ x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
+			rs = statement.executeQuery("SELECT `line1` FROM `bookshelf` WHERE `world`='" + worldName + "' AND `locx` =" + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 			while (rs.next() == true) {
 				checkUpdate = true;
 			}
@@ -56,11 +55,11 @@ public class IOBookcaseDatabase {
 		try {
 			if (checkUpdate == true)
 
-				statement.executeUpdate("UPDATE bookshelf SET `" + lineName + "`='" + textToWrite + "' WHERE `world`='"
-						+ worldName + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z + ";");
+				statement.executeUpdate("UPDATE bookshelf SET `" + lineName + "`='" + textToWrite + "' WHERE `world`='" + worldName + "' AND `locx`=" + x + " AND `locy`=" + y
+						+ " AND `locz`=" + z + ";");
 			else
-				statement.executeUpdate("INSERT INTO bookshelf (`world`,`" + lineName + "`,`locx`,`locy`,`locz`) VALUES ('"
-						+ worldName + "', '" + textToWrite + "', " + x + ", " + y + ", " + z + ");");
+				statement.executeUpdate("INSERT INTO bookshelf (`world`,`" + lineName + "`,`locx`,`locy`,`locz`) VALUES ('" + worldName + "', '" + textToWrite + "', " + x + ", "
+						+ y + ", " + z + ");");
 
 			rs.close();
 			statement.close();
@@ -76,14 +75,13 @@ public class IOBookcaseDatabase {
 	public void readCase(Player player, String worldName, int x, int y, int z) {
 
 		String[] sendback = { null, null, null, null, null, null, null, null, null, null };
-		
+
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:plugins/IOBookcase/bookcase.db");
 			statement = connection.createStatement();
-			
-			rs = statement.executeQuery("SELECT `line1`, `line2`, `line3`, `line4`, `line5`, `line6`, `line7`, `line8`, `line9`, `line10` FROM `bookshelf` WHERE `world`='"
-							+ worldName + "' AND `locx` = " + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 
+			rs = statement.executeQuery("SELECT `line1`, `line2`, `line3`, `line4`, `line5`, `line6`, `line7`, `line8`, `line9`, `line10` FROM `bookshelf` WHERE `world`='"
+					+ worldName + "' AND `locx` = " + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 
 			while (rs.next() == true) {
 				sendback[0] = rs.getString("line1");
@@ -116,8 +114,7 @@ public class IOBookcaseDatabase {
 
 		try {
 			statement = connection.createStatement();
-			rs = statement.executeQuery("SELECT `line1` FROM `bookshelf` WHERE `world`='" + world + "' AND `locx`=" + x
-					+ " AND `locy` = " + y + " AND `locz` = " + z + ";");
+			rs = statement.executeQuery("SELECT `line1` FROM `bookshelf` WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 
 			// Go through the lines to find something
 			while (rs.next()) {
@@ -141,8 +138,7 @@ public class IOBookcaseDatabase {
 			connection = DriverManager.getConnection("jdbc:sqlite:plugins/IOBookcase/bookcase.db");
 			statement = connection.createStatement();
 
-			statement.executeUpdate("DELETE FROM bookshelf WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy`="
-					+ y + " AND `locz`=" + z);
+			statement.executeUpdate("DELETE FROM bookshelf WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z);
 
 			statement.close();
 			connection.close();
@@ -158,11 +154,9 @@ public class IOBookcaseDatabase {
 		try {
 			statement = connection.createStatement();
 
-			statement
-					.execute("CREATE TABLE IF NOT EXISTS bookshelf (`world` varchar(32),"
-							+ "`locx` REAL, `locy` REAL, `locz` REAL, "
-							+ "`line1` varchar(32), `line2` varchar(32), `line3` varchar(32), `line4` varchar(32), `line5` varchar(32),"
-							+ "`line6` varchar(32), `line7` varchar(32), `line8` varchar(32), `line9` varchar(32), `line10` varchar(32));");
+			statement.execute("CREATE TABLE IF NOT EXISTS bookshelf (`world` varchar(32)," + "`locx` REAL, `locy` REAL, `locz` REAL, "
+					+ "`line1` varchar(32), `line2` varchar(32), `line3` varchar(32), `line4` varchar(32), `line5` varchar(32),"
+					+ "`line6` varchar(32), `line7` varchar(32), `line8` varchar(32), `line9` varchar(32), `line10` varchar(32));");
 
 			statement.close();
 			connection.close();
