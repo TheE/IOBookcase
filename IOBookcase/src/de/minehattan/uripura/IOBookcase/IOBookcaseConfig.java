@@ -27,6 +27,7 @@ public class IOBookcaseConfig {
 		this.configDefaults.put("msg-error-import", "Could not find the case's name, make sure your format is correct");
 		this.configDefaults.put("msg-error-to-few-arguments", "To few Arguments. Try again");
 		this.configDefaults.put("msg-error-find-file", "Unable to find the file. Contact you Server administartor!");
+		
 		if (cFile.exists() == false) {
 			for (String key : this.configDefaults.keySet())
 				this.config.set(key, this.configDefaults.get(key));

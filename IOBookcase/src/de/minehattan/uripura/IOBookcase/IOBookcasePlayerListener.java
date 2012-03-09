@@ -14,8 +14,12 @@ import de.minehattan.uripura.IOBookcase.IOBookcaseDatabase;
 
 public class IOBookcasePlayerListener implements Listener {
 
+	private IOBookcase plugin;
+
 	public IOBookcasePlayerListener(IOBookcase instance) {
+		this.plugin = instance;
 	}
+
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -35,6 +39,6 @@ public class IOBookcasePlayerListener implements Listener {
 		if (connection.checkCase(worldName, block.getX(), block.getY(), block.getZ())) {
 			connection.readCase(player, worldName, block.getX(), block.getY(), block.getZ());
 		} else
-			player.sendMessage(ChatColor.RED + "This bookcase is empty.");
+			player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-empty-bookcase"));
 	}
 }
