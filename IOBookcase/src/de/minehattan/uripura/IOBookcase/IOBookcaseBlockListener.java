@@ -204,16 +204,25 @@ public class IOBookcaseBlockListener implements Listener {
 
 	private void handleImport(Player player, Block bookcase, Block sign, String firstLine, String otherLines) {
 		// String that is send to the database
-		String textToWrite;
+		String textToWrite = "";
 		// Name of the current world
 		String worldName = player.getWorld().getName();
-		// To find out if the import was successful
+		// Set to true if the import was successful
 		Boolean found = false;
+		// Our Database-Object
+		IOBookcaseDatabase connection = new IOBookcaseDatabase();
+		// Number of the Line we currently got
+		int lineNum = 1;
+		// Stores the color of the text
+		String txtColor = "";
+		// Stored the name of the case
+		String caseName = "";
 		
 		// import from text file
 		if (firstLine.contains("@import")) {
 
 			try {
+				
 				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 				Document doc = docBuilder.parse(plugin.getDataFolder() + File.separator + "import.xml");
@@ -223,13 +232,14 @@ public class IOBookcaseBlockListener implements Listener {
 
 				NodeList cases = doc.getElementsByTagName("case");
 
+
 				int numberOfCases = cases.getLength();
-				// System.out.println("Number of cases present : " + numberOfCases);
+				// System.out.println("Number of cases present: " + numberOfCases);
 				// System.out.println ("Root element: " + doc.getDocumentElement().getNodeName());
 
-				for (int i = 0; i < numberOfCases; i++) {
+				for (int caseNum = 0; caseNum < numberOfCases; caseNum++) {
 
-					Node caseNode = cases.item(i);
+					Node caseNode = cases.item(caseNum);
 
 					if (caseNode.getNodeType() == Node.ELEMENT_NODE) {
 
@@ -237,20 +247,21 @@ public class IOBookcaseBlockListener implements Listener {
 
 						NodeList caseLineList = caseElement.getElementsByTagName("line");
 
-						String name = "";
-
 						// Attribute in which the name of the case is stored
 						if (caseElement.hasAttributes()) {
 							NamedNodeMap attrs = caseElement.getAttributes();
-							for (int u = 0; u < attrs.getLength(); u++) {
-								Attr attribute = (Attr) attrs.item(u);
-								name = attribute.getValue();
+							// Search for the name attribute and set the caseName
+							for (int i = 0; i < attrs.getLength(); i++) {
+								Attr attribute = (Attr) attrs.item(i);
+								if (attribute.getName().equals("name")) {
+									caseName = attribute.getValue();
+								}
 							}
 						}
 
-						for (int k = 0; k < caseLineList.getLength(); k++) {
+						for (int caseLineNum = 0; caseLineNum < caseLineList.getLength(); caseLineNum++) {
 
-							Element caseLine = (Element) caseLineList.item(k);
+							Element caseLine = (Element) caseLineList.item(caseLineNum);
 							NodeList text = caseLine.getChildNodes();
 
 							// Get the text thats in the line
@@ -260,40 +271,43 @@ public class IOBookcaseBlockListener implements Listener {
 							if (caseLine.hasAttributes()) {
 								NamedNodeMap attrs = caseLine.getAttributes();
 
-								// Just to initialize the variables
-								int lineNum = 1;
-								String txtColor = "";
-								
-								if (otherLines.equals(name)) {
+								if (otherLines.equals(caseName)) {
 									for (int u = 0; u < attrs.getLength(); u++) {
 										Attr attribute = (Attr) attrs.item(u);
 
 										// Search for the num and color
 										if (attribute.getName().equals("num")) {
-											if (isIntNumber(attribute.getValue())) {
+											// Check if it is really a number
+											// if its not we improvise on the lineNumber
+											if (isIntNumber(attribute.getValue()))
 												lineNum = Integer.parseInt(attribute.getValue());
-											}
-										} else if (attribute.getName().equals("color")) {
-											txtColor = attribute.getValue();
+											else
+												lineNum = caseLineNum;
 										}
+										else if (attribute.getName().equals("color"))
+											txtColor = attribute.getValue();
 									}
-									
-									textToWrite = getColor(txtColor, player) + txtLine;
-									
-									IOBookcaseDatabase connection = new IOBookcaseDatabase();
-									connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
-									
-									player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-found"));
-									
-									found = true;
+									if (lineNum < 11 && lineNum > 0) {
+										// Build the text string for the import
+										textToWrite = getColor(txtColor, player) + txtLine;
+										/*
+										 * The text is safe to be send to the database
+										 */
+										connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
+
+										found = true;
+									} else
+										player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
 								}
 							}
 						}
 					}
 				}
-				if (found == false) {
+				if (found == false)
 					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-error-import"));
-				}
+				else
+					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-found"));
+				
 				// Delete the sign and give it back to the player
 				giveSignBack(player, sign);
 
