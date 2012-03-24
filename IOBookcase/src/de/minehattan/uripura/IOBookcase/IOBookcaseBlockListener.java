@@ -220,7 +220,7 @@ public class IOBookcaseBlockListener implements Listener {
 		
 		// import from text file
 		if (firstLine.contains("@import")) {
-
+			
 			try {
 				
 				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -236,7 +236,7 @@ public class IOBookcaseBlockListener implements Listener {
 				int numberOfCases = cases.getLength();
 				// System.out.println("Number of cases present: " + numberOfCases);
 				// System.out.println ("Root element: " + doc.getDocumentElement().getNodeName());
-
+				
 				for (int caseNum = 0; caseNum < numberOfCases; caseNum++) {
 
 					Node caseNode = cases.item(caseNum);
@@ -244,7 +244,6 @@ public class IOBookcaseBlockListener implements Listener {
 					if (caseNode.getNodeType() == Node.ELEMENT_NODE) {
 
 						Element caseElement = (Element) caseNode;
-
 						NodeList caseLineList = caseElement.getElementsByTagName("line");
 
 						// Attribute in which the name of the case is stored
@@ -290,11 +289,9 @@ public class IOBookcaseBlockListener implements Listener {
 									if (lineNum < 11 && lineNum > 0) {
 										// Build the text string for the import
 										textToWrite = getColor(txtColor, player) + txtLine;
-										/*
-										 * The text is safe to be send to the database
-										 */
-										connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
+										// The text is safe to be send to the database
 
+										connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
 										found = true;
 									} else
 										player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));

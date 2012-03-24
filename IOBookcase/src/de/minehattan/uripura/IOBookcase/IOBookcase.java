@@ -93,7 +93,7 @@ public class IOBookcase extends JavaPlugin {
 	}
 
 	private boolean checkFile() {
-		File importcase = new File(getDataFolder() + File.separator + "import.txt");
+		File importcase = new File(getDataFolder() + File.separator + "import.xml");
 		if (importcase.exists())
 			return true;
 		else
