@@ -84,11 +84,11 @@ public class IOBookcasePlayerListener implements Listener {
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
 		if (connection.checkCase(worldName, block.getX(), block.getY(),
 				block.getZ())) {
-			player.sendMessage(ChatColor.GRAY + plugin.getConfig().getString("msg-pick-book"));
+			player.sendMessage(ChatColor.GRAY + IOBookcase.msgPickBook);
 			connection.readCase(player, worldName, block.getX(), block.getY(),
 					block.getZ());
-		} else if (plugin.getConfig().getBoolean("random-text")) {
-			player.sendMessage(ChatColor.GRAY + plugin.getConfig().getString("msg-pick-book"));
+		} else if (IOBookcase.randomText) {
+			player.sendMessage(IOBookcase.msgPickBook);
 			try {
 				player.sendMessage(ChatColor.YELLOW + this.getBookLine());
 			} catch (IOException e) {
@@ -96,7 +96,6 @@ public class IOBookcasePlayerListener implements Listener {
 						+ "Failed to fetch a line from the books file.");
 			}
 		} else
-			player.sendMessage(ChatColor.YELLOW
-					+ plugin.getConfig().getString("msg-empty-bookcase"));
+			player.sendMessage(ChatColor.YELLOW + IOBookcase.msgEmptyBookcase);
 	}
 }

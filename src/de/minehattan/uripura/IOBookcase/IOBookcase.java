@@ -15,9 +15,14 @@ public class IOBookcase extends JavaPlugin {
 	private Logger log = Logger.getLogger("minecraft");
 	private IOBookcaseBlockListener blockListener = new IOBookcaseBlockListener(this);
 	private IOBookcasePlayerListener playerListener = new IOBookcasePlayerListener(this);
-	public String pluginDirPath;
-	public File configFile;
-	public IOBookcaseConfig config;
+	private File pluginFolder;
+	private File configFile;
+	
+	public static String msgEmptyBookcase, msgPickBook, msgNotifyWritten,
+			msgNotifyDeleted, msgNotifyFound, msgErrorLines, msgErrorFormat,
+			msgErrorExeption, msgErrorColor, msgErrorImport,
+			msgErrorToFewArguments, msgErrorFindFile;
+	public static boolean dropBookcase, randomText;
 
 	public void onEnable() {
 
@@ -33,9 +38,11 @@ public class IOBookcase extends JavaPlugin {
 		pm.registerEvents(this.blockListener, this);
 		pm.registerEvents(this.playerListener, this);
 
-		this.pluginDirPath = this.getDataFolder().getAbsolutePath();
-		this.configFile = new File(this.pluginDirPath + File.separator + "config.yml");
-		this.config = new IOBookcaseConfig(this.configFile);
+		pluginFolder = getDataFolder();
+		configFile = new File(pluginFolder, "config.yml");
+		createConfig();
+		saveConfig();
+		loadConfig();
 
 		if (!checkFile())
 			createFile();
@@ -61,6 +68,44 @@ public class IOBookcase extends JavaPlugin {
 		this.log.warning("[" + pdFile.getName() + " " + pdFile.getVersion() + "] " + msg);
 	}
 
+	private void createConfig() {
+		if(!pluginFolder.exists()) {
+			try {
+				pluginFolder.mkdir();
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(!configFile.exists()) {
+			try {
+				configFile.createNewFile();
+				getConfig().options().copyDefaults(true);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void loadConfig(){
+		dropBookcase = getConfig().getBoolean("drop-bookcase");
+		randomText = getConfig().getBoolean("random-text");
+		msgEmptyBookcase = getConfig().getString("msg-empty-bookcase");
+		msgPickBook = getConfig().getString("msg-pick-book");
+		msgNotifyWritten = getConfig().getString("msg-notify-written");
+		msgNotifyDeleted = getConfig().getString("msg-notify-deleted");
+		msgNotifyFound = getConfig().getString("msg-notify-found");
+		msgErrorLines = getConfig().getString("msg-error-lines");
+		msgErrorFormat = getConfig().getString("msg-error-format");
+		msgErrorExeption = getConfig().getString("msg-error-exeption");
+		msgErrorColor = getConfig().getString("msg-error-color");
+		msgErrorImport = getConfig().getString("msg-error-import");
+		msgErrorToFewArguments = getConfig().getString("msg-error-to-few-arguments");
+		msgErrorFindFile = getConfig().getString("msg-error-find-file");
+	}
+	
 	private void createDatabase() {
 		this.logMessage("bookcase.db does not exist. Creating...");
 		IOBookcaseDatabase database = new IOBookcaseDatabase();
