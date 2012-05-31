@@ -1,6 +1,7 @@
 package de.minehattan.uripura.IOBookcase;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -110,7 +111,9 @@ public class IOBookcaseBlockListener implements Listener {
 
 				event.setCancelled(true);
 				block.setType(Material.AIR);
-				block.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.BOOKSHELF, 1));
+				if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+					block.getWorld().dropItemNaturally(event.getBlock().getLocation(),new ItemStack(Material.BOOKSHELF, 1));
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("delete fail: " + e);
