@@ -1,7 +1,9 @@
 package de.minehattan.uripura.IOBookcase;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -39,6 +41,8 @@ public class IOBookcase extends JavaPlugin {
 			createFile();
 		if (!checkDatabase())
 			createDatabase();
+		if (!checkBookFile())
+			createBookFile();
 
 		this.logMessage("Enabeld");
 	}
@@ -64,27 +68,54 @@ public class IOBookcase extends JavaPlugin {
 			this.logMessage("Database created!");
 		} else
 			this.logMessage("Cannot create Database!");
-
 	}
 
 	private void createFile() {
-
 		File importFile = new File(getDataFolder() + File.separator + "import.xml");
-
 		new File(getDataFolder().toString()).mkdir();
-
 		this.logMessage("import.xml does not exist. Creating...");
 		try {
 			importFile.createNewFile();
 			this.logMessage("File created!");
-
 		} catch (IOException e) {
 			System.out.println("Cannot create File " + importFile.getPath() + File.separator + "import.xml");
 		}
 	}
 
-	private boolean checkDatabase() {
+	private void createBookFile() {
+		File bookFile = new File(getDataFolder() + File.separator +  "books.txt");
+		this.logMessage("books.txt does not exist. Creating...");
+		
+		InputStream input = this.getResource("books.txt");
+		if (input != null) {
+			FileOutputStream output = null;
+			try {
+				output = new FileOutputStream(bookFile);
+				byte[] buf = new byte[8192];
+				int length = 0;
+				while ((length = input.read(buf)) > 0) {
+					output.write(buf, 0, length);
+				}
+				this.logMessage("books.txt created!");
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("Cannot create File " + bookFile.getPath()
+						+ File.separator + "books.txt");
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e) {
+				}
+				try {
+					if (output != null)
+						output.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
 
+	private boolean checkDatabase() {
 		File importcase = new File(getDataFolder() + File.separator + "bookcase.db");
 		if (importcase.exists())
 			return true;
@@ -94,6 +125,14 @@ public class IOBookcase extends JavaPlugin {
 
 	private boolean checkFile() {
 		File importcase = new File(getDataFolder() + File.separator + "import.xml");
+		if (importcase.exists())
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean checkBookFile() {
+		File importcase = new File(getDataFolder() + File.separator + "books.txt");
 		if (importcase.exists())
 			return true;
 		else
