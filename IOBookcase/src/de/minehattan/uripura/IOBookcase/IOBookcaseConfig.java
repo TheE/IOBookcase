@@ -18,6 +18,7 @@ public class IOBookcaseConfig {
 		this.configDefaults.put("drop-bookcase", true);
 		this.configDefaults.put("random-text", true);
 		this.configDefaults.put("msg-empty-bookcase", "This bookcase is empty.");
+		this.configDefaults.put("msg-pick-book", "You pick up a book...");
 		this.configDefaults.put("msg-notify-written", "Text written to line");
 		this.configDefaults.put("msg-notify-deleted", "Bookcase unregistered.");
 		this.configDefaults.put("msg-notify-found", "Bookcase was imported.");
