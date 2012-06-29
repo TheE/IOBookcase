@@ -21,12 +21,6 @@ public class IOBookcase extends JavaPlugin {
 	private IOBookcasePlayerListener playerListener = new IOBookcasePlayerListener(this);
 	private File pluginFolder;
 	private File configFile;
-	
-	public static String msgEmptyBookcase, msgPickBook, msgNotifyWritten,
-			msgNotifyDeleted, msgNotifyFound, msgErrorLines, msgErrorFormat,
-			msgErrorExeption, msgErrorColor, msgErrorImport,
-			msgErrorToFewArguments, msgErrorFindFile;
-	public static boolean dropBookcase, randomText;
 
 	public void onEnable() {
 
@@ -46,7 +40,6 @@ public class IOBookcase extends JavaPlugin {
 		configFile = new File(pluginFolder, "config.yml");
 		createConfig();
 		saveConfig();
-		loadConfig();
 
 		createFile();
 		createDatabase();
@@ -68,7 +61,6 @@ public class IOBookcase extends JavaPlugin {
 
 			if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
 				reloadConfig();
-				loadConfig();
 				sender.sendMessage(ChatColor.YELLOW
 						+ "IOBookcase configuration file reloaded.");
 			} else
@@ -108,23 +100,6 @@ public class IOBookcase extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	private void loadConfig(){
-		dropBookcase = getConfig().getBoolean("drop-bookcase");
-		randomText = getConfig().getBoolean("random-text");
-		msgEmptyBookcase = getConfig().getString("msg-empty-bookcase");
-		msgPickBook = getConfig().getString("msg-pick-book");
-		msgNotifyWritten = getConfig().getString("msg-notify-written");
-		msgNotifyDeleted = getConfig().getString("msg-notify-deleted");
-		msgNotifyFound = getConfig().getString("msg-notify-found");
-		msgErrorLines = getConfig().getString("msg-error-lines");
-		msgErrorFormat = getConfig().getString("msg-error-format");
-		msgErrorExeption = getConfig().getString("msg-error-exeption");
-		msgErrorColor = getConfig().getString("msg-error-color");
-		msgErrorImport = getConfig().getString("msg-error-import");
-		msgErrorToFewArguments = getConfig().getString("msg-error-to-few-arguments");
-		msgErrorFindFile = getConfig().getString("msg-error-find-file");
 	}
 	
 	private void createDatabase() {

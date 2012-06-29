@@ -80,7 +80,7 @@ public class IOBookcaseBlockListener implements Listener {
 		} else if (firstLine.contains("@import")) {
 			handleImport(player, block, sign, firstLine, bufferText.toString());
 		} else
-			player.sendMessage(ChatColor.RED + IOBookcase.msgErrorFormat);
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -103,10 +103,10 @@ public class IOBookcaseBlockListener implements Listener {
 
 			if (checkcase) {
 				connection.deleteCase(worldName, x, y, z);
-				event.getPlayer().sendMessage(ChatColor.RED + IOBookcase.msgNotifyDeleted);
+				event.getPlayer().sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-notify-deleted"));
 
 			}
-			if (IOBookcase.dropBookcase) {
+			if (plugin.getConfig().getBoolean("drop-bookcase")) {
 				// We cancel the event and drop a normal bookcase
 
 				event.setCancelled(true);
@@ -172,7 +172,7 @@ public class IOBookcaseBlockListener implements Listener {
 			if (isIntNumber(firstLineString[1])) {
 				lineNum = Integer.parseInt(firstLineString[1]);
 			} else {
-				player.sendMessage(ChatColor.RED + IOBookcase.msgErrorFormat);
+				player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
 				return;
 			}
 
@@ -182,7 +182,7 @@ public class IOBookcaseBlockListener implements Listener {
 				lineColor = getColor(firstLineString[2], player);
 			}
 		} else {
-			player.sendMessage(ChatColor.RED + IOBookcase.msgErrorToFewArguments);
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-to-few-arguments"));
 			return;
 		}
 
@@ -195,13 +195,13 @@ public class IOBookcaseBlockListener implements Listener {
 			 */
 			IOBookcaseDatabase connection = new IOBookcaseDatabase();
 			connection.writeSql(textToWrite, lineNum, worldName, block.getX(), block.getY(), block.getZ());
-			player.sendMessage(ChatColor.YELLOW + IOBookcase.msgNotifyWritten + " " + lineNum);
+			player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-written") + " " + lineNum);
 
 			// Delete the sign and give it back to the player
 			giveSignBack(player, sign);
 
 		} else
-			player.sendMessage(ChatColor.RED + IOBookcase.msgErrorLines);
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
 
 	}
 
@@ -297,16 +297,16 @@ public class IOBookcaseBlockListener implements Listener {
 										connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
 										found = true;
 									} else
-										player.sendMessage(ChatColor.RED + IOBookcase.msgErrorLines);
+										player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
 								}
 							}
 						}
 					}
 				}
 				if (found == false)
-					player.sendMessage(ChatColor.YELLOW + IOBookcase.msgErrorImport);
+					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-error-import"));
 				else
-					player.sendMessage(ChatColor.YELLOW + IOBookcase.msgNotifyFound);
+					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-found"));
 				
 				// Delete the sign and give it back to the player
 				giveSignBack(player, sign);
@@ -381,7 +381,7 @@ public class IOBookcaseBlockListener implements Listener {
 		// WHITE
 		else {
 			// if a wrong color is passed we set the default to white
-			player.sendMessage(ChatColor.RED + IOBookcase.msgErrorColor);
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-color"));
 		}
 		return "§f";
 	}

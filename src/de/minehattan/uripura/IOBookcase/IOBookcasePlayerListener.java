@@ -75,7 +75,7 @@ public class IOBookcasePlayerListener implements Listener {
 
 		// Check if the player is actually interacting with a bookcase
 		// Also if the player holds a block we don't want to display text
-		if (event.isCancelled() || block.getType() != Material.BOOKSHELF)
+		if (event.isCancelled() || block.getType() != Material.BOOKSHELF || player.getItemInHand().getType() != Material.AIR)
 			return;
 
 		if (player.hasPermission("iobookcase.read") == false)
@@ -84,11 +84,11 @@ public class IOBookcasePlayerListener implements Listener {
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
 		if (connection.checkCase(worldName, block.getX(), block.getY(),
 				block.getZ())) {
-			player.sendMessage(ChatColor.GRAY + IOBookcase.msgPickBook);
+			player.sendMessage(ChatColor.GRAY + plugin.getConfig().getString("msg-pick-book"));
 			connection.readCase(player, worldName, block.getX(), block.getY(),
 					block.getZ());
-		} else if (IOBookcase.randomText) {
-			player.sendMessage(IOBookcase.msgPickBook);
+		} else if (plugin.getConfig().getBoolean("random-text")) {
+			player.sendMessage(plugin.getConfig().getString("msg-pick-book"));
 			try {
 				player.sendMessage(ChatColor.YELLOW + this.getBookLine());
 			} catch (IOException e) {
@@ -96,6 +96,6 @@ public class IOBookcasePlayerListener implements Listener {
 						+ "Failed to fetch a line from the books file.");
 			}
 		} else
-			player.sendMessage(ChatColor.YELLOW + IOBookcase.msgEmptyBookcase);
+			player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-empty-bookcase"));
 	}
 }
