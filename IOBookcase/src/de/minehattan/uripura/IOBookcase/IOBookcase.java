@@ -30,10 +30,16 @@ public class IOBookcase extends JavaPlugin {
 		pm.registerEvents( this.playerListener, this);
 
 		pluginFolder = getDataFolder();
+		
+		// Set the name for the configfile
+		configFile = new File( pluginFolder, "config.yml");
+		
+		// create it
 		createConfig();
+		// ...and save
 		saveConfig();
 
-		createFile();
+		createImportFile();
 		createDatabase();
 		createBookFile();
 
@@ -82,7 +88,6 @@ public class IOBookcase extends JavaPlugin {
 				
 				if( !configFile.exists()) {
 					getConfig().options().copyDefaults( true);
-					configFile = new File( pluginFolder, "config.yml");
 				}
 				
 			} catch( Exception e) {
@@ -103,7 +108,7 @@ public class IOBookcase extends JavaPlugin {
 		}
 	}
 
-	private void createFile() {
+	private void createImportFile() {
 		if( !checkFile( "import.xml")) {
 			File importFile = new File( getDataFolder() + File.separator + "import.xml");
 			new File( getDataFolder().toString()).mkdir();
@@ -112,7 +117,7 @@ public class IOBookcase extends JavaPlugin {
 				importFile.createNewFile();
 				this.logMessage( "File created!");
 			} catch( IOException e) {
-				System.out.println( "Cannot create File " + importFile.getPath() + File.separator + "import.xml");
+				this.errorMessage( "Cannot create File " + importFile.getPath() + File.separator + "import.xml");
 			}
 		}
 	}
@@ -135,7 +140,7 @@ public class IOBookcase extends JavaPlugin {
 					this.logMessage( "books.txt created!");
 				} catch( IOException e) {
 					e.printStackTrace();
-					System.out.println( "Cannot create File " + bookFile.getPath() + File.separator + "books.txt");
+					this.errorMessage( "Cannot create File " + bookFile.getPath() + File.separator + "books.txt");
 				} finally {
 					try {
 						input.close();
@@ -152,8 +157,8 @@ public class IOBookcase extends JavaPlugin {
 	}
 
 	private boolean checkFile( String file) {
-		File importcase = new File( getDataFolder() + File.separator + file);
-		if( importcase.exists())
+		File testfile = new File( getDataFolder() + File.separator + file);
+		if( testfile.exists())
 			return true;
 		else
 			return false;
