@@ -1,7 +1,27 @@
 name: IOBookcase
-main: de.minehattan.uripura.IOBookcase.IOBookcase
 version: 0.6.3
-website: https://github.com/Uripura
+description: Allows players to read/write from bookcases.
 author: Uripura (Forked from lonelydime)
-description: >
-             Allows players to read/write from bookcases.
+website: https://github.com/Uripura
+main: de.minehattan.uripura.IOBookcase.IOBookcase
+commands:
+  iobookcase:
+    aliases: iob
+    description: Allows players to read/write from bookcases.
+    usage: Use /<command> reload to reload the configuration.
+permissions:
+    iobookcase.*:
+        description: Gives you access to all functions of IOBookcase.
+        children:
+            iobookcase.read: true
+            iobookcase.reload: true
+            iobookcase.write: true
+    iobookcase.read:
+        description: Allows you to read books.
+        default: op
+    iobookcase.reload:
+        description: Allows you to reload the configuration file.
+        default: op
+    iobookcase.write:
+        description: Allows you to write books.
+        default: op

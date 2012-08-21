@@ -1,0 +1,20 @@
+# IOBookcase's configuration file
+# -----
+# sqlite-database-name: The Name of the database the plugin creates to store the book contents
+# drop-bookcase: Controls if destroyed bookcases are dropped
+# random-text: Controls if empty bookcases issues random text taken from the books.txt
+# -----
+# You may configure every message the plugin issues below.
+sqlite-database-name: 'bookcase.db'
+drop-bookcase: true
+random-text: true
+msg-empty-bookcase: 'This bookcase is empty.'
+msg-pick-book: 'You pick up a book...'
+msg-notify-written: 'Text written to line.'
+msg-notify-deleted: 'Bookcase unregistered.'
+msg-notify-found: 'Bookcase was imported.'
+msg-error-lines: 'Only lines 1-10 allowed.'
+msg-error-format: 'The format is @line linenumber [color].'
+msg-error-color: 'You selected a none valid color: Defaulting to white.'
+msg-error-import: 'Could not find the case''s name, make sure your format is correct.'
+msg-error-to-few-arguments: 'To few Arguments. Try again.'
