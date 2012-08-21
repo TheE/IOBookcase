@@ -28,12 +28,12 @@ public class IOBookcaseBlockListener implements Listener {
 
 	private IOBookcase plugin;
 
-	public IOBookcaseBlockListener( IOBookcase instance) {
+	public IOBookcaseBlockListener(IOBookcase instance) {
 		this.plugin = instance;
 	}
 
-	@EventHandler( priority = EventPriority.HIGH)
-	public void onSignChange( SignChangeEvent event) {
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onSignChange(SignChangeEvent event) {
 		// Stores the first line of the sign
 		String firstLine = null;
 		// Stores the left lines of the sign
@@ -44,51 +44,52 @@ public class IOBookcaseBlockListener implements Listener {
 		Block sign = event.getBlock();
 		boolean signOnCase = false;
 
-		if( event.isCancelled())
+		if (event.isCancelled())
 			return;
-		if( player.hasPermission( "iobookcase.write") == false)
+		if (player.hasPermission("iobookcase.write") == false)
 			return;
 
 		// Check if the Sign was placed on one of the Sides...
-		if( event.getBlock().getRelative( BlockFace.NORTH).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.NORTH);
+		if (event.getBlock().getRelative(BlockFace.NORTH).getType() == Material.BOOKSHELF) {
+			block = event.getBlock().getRelative(BlockFace.NORTH);
 			signOnCase = true;
-		} else if( event.getBlock().getRelative( BlockFace.EAST).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.EAST);
+		} else if (event.getBlock().getRelative(BlockFace.EAST).getType() == Material.BOOKSHELF) {
+			block = event.getBlock().getRelative(BlockFace.EAST);
 			signOnCase = true;
-		} else if( event.getBlock().getRelative( BlockFace.SOUTH).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.SOUTH);
+		} else if (event.getBlock().getRelative(BlockFace.SOUTH).getType() == Material.BOOKSHELF) {
+			block = event.getBlock().getRelative(BlockFace.SOUTH);
 			signOnCase = true;
-		} else if( event.getBlock().getRelative( BlockFace.WEST).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.WEST);
+		} else if (event.getBlock().getRelative(BlockFace.WEST).getType() == Material.BOOKSHELF) {
+			block = event.getBlock().getRelative(BlockFace.WEST);
 			signOnCase = true;
 		}
 		// ...if not: stop here
-		if( signOnCase == false)
+		if (signOnCase == false)
 			return;
 
 		// Store the first line in firstLine and the rest in bufferText
-		firstLine = event.getLine( 0).toLowerCase();
-		for( int i = 1; i < 4; i++) {
-			bufferText.append( event.getLine( i));
+		firstLine = event.getLine(0).toLowerCase();
+		for (int i = 1; i < 4; i++) {
+			bufferText.append(event.getLine(i));
+			// player.sendMessage("BufferText: " + bufferText.toString());
 		}
 
 		// Check if the first line contains @line or @import
-		if( firstLine.contains( "@line")) {
-			handleLine( player, block, sign, firstLine, bufferText.toString());
-		} else if( firstLine.contains( "@import")) {
-			handleImport( player, block, sign, firstLine, bufferText.toString());
+		if (firstLine.contains("@line")) {
+			handleLine(player, block, sign, firstLine, bufferText.toString());
+		} else if (firstLine.contains("@import")) {
+			handleImport(player, block, sign, firstLine, bufferText.toString());
 		} else
-			player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-format"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
 	}
 
-	@EventHandler( priority = EventPriority.HIGH)
-	public void onBlockBreak( BlockBreakEvent event) {
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
 		boolean checkcase = false;
 		String worldName = event.getPlayer().getWorld().getName();
 
-		if( block.getType() != Material.BOOKSHELF || event.isCancelled())
+		if (block.getType() != Material.BOOKSHELF || event.isCancelled())
 			return;
 
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
@@ -98,35 +99,35 @@ public class IOBookcaseBlockListener implements Listener {
 			int y = event.getBlock().getY();
 			int z = event.getBlock().getZ();
 
-			checkcase = connection.checkCase( worldName, x, y, z);
+			checkcase = connection.checkCase(worldName, x, y, z);
 
-			if( checkcase) {
-				connection.deleteCase( worldName, x, y, z);
-				event.getPlayer().sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-notify-deleted"));
+			if (checkcase) {
+				connection.deleteCase(worldName, x, y, z);
+				event.getPlayer().sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-notify-deleted"));
 
 			}
-			if( plugin.getConfig().getBoolean( "drop-bookcase")) {
+			if (plugin.getConfig().getBoolean("drop-bookcase")) {
 				// We cancel the event and drop a normal bookcase
 
-				event.setCancelled( true);
-				block.setType( Material.AIR);
-				if( event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-					block.getWorld().dropItemNaturally( event.getBlock().getLocation(), new ItemStack( Material.BOOKSHELF, 1));
+				event.setCancelled(true);
+				block.setType(Material.AIR);
+				if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+					block.getWorld().dropItemNaturally(event.getBlock().getLocation(),new ItemStack(Material.BOOKSHELF, 1));
 				}
 			}
-		} catch( Exception e) {
-			System.out.println( "delete fail: " + e);
+		} catch (Exception e) {
+			System.out.println("delete fail: " + e);
 		}
 
 	}
 
-	@EventHandler( priority = EventPriority.MONITOR)
-	public void onBlockBurn( BlockBurnEvent event) {
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBlockBurn(BlockBurnEvent event) {
 		Block block = event.getBlock();
 		boolean checkcase = false;
 		String worldName = block.getWorld().getName();
 
-		if( block.getType() != Material.BOOKSHELF || event.isCancelled())
+		if (block.getType() != Material.BOOKSHELF || event.isCancelled())
 			return;
 
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
@@ -136,18 +137,18 @@ public class IOBookcaseBlockListener implements Listener {
 			int y = event.getBlock().getY();
 			int z = event.getBlock().getZ();
 
-			checkcase = connection.checkCase( worldName, x, y, z);
+			checkcase = connection.checkCase(worldName, x, y, z);
 
-			if( checkcase) {
-				connection.deleteCase( worldName, x, y, z);
+			if (checkcase) {
+				connection.deleteCase(worldName, x, y, z);
 			}
 
-		} catch( Exception e) {
-			System.out.println( "delete fail: " + e);
+		} catch (Exception e) {
+			System.out.println("delete fail: " + e);
 		}
 	}
 
-	private void handleLine( Player player, Block block, Block sign, String firstLine, String otherLines) {
+	private void handleLine(Player player, Block block, Block sign, String firstLine, String otherLines) {
 		// Linenumber in the bookcase
 		int lineNum = 1;
 		// Color of the line (default = white)
@@ -159,51 +160,52 @@ public class IOBookcaseBlockListener implements Listener {
 		// Name of the current world
 		String worldName = player.getWorld().getName();
 
-		firstLineString = firstLine.split( " ");
+		firstLineString = firstLine.split(" ");
 
 		/*
 		 * Format: @line NUMBER [COLOR_AS_STRING] If the array contains more
 		 * than 1 string we probably got a line number
 		 */
-		if( firstLineString.length > 1) {
+		if (firstLineString.length > 1) {
 
 			// Check whether this string is numeric or not
-			if( isIntNumber( firstLineString[1])) {
-				lineNum = Integer.parseInt( firstLineString[1]);
+			if (isIntNumber(firstLineString[1])) {
+				lineNum = Integer.parseInt(firstLineString[1]);
 			} else {
-				player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-format"));
+				player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-format"));
 				return;
 			}
 
 			// If it's bigger than 2 we got an additional color
-			if( firstLineString.length > 2) {
-				lineColor = getColor( firstLineString[2], player);
+			if (firstLineString.length > 2) {
+				firstLineString[2] = firstLineString[2].toLowerCase();
+				lineColor = getColor(firstLineString[2], player);
 			}
 		} else {
-			player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-to-few-arguments"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-to-few-arguments"));
 			return;
 		}
 
-		// Create the String that is send to the Database
+		// Create the String that is send o the Database
 		textToWrite = lineColor + otherLines;
 
-		if( lineNum < 11 && lineNum > 0) {
+		if (lineNum < 11 && lineNum > 0) {
 			/*
 			 * The text is safe to be send to the database
 			 */
 			IOBookcaseDatabase connection = new IOBookcaseDatabase();
-			connection.writeSql( textToWrite, lineNum, worldName, block.getX(), block.getY(), block.getZ());
-			player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-notify-written") + " " + lineNum);
+			connection.writeSql(textToWrite, lineNum, worldName, block.getX(), block.getY(), block.getZ());
+			player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-written") + " " + lineNum);
 
 			// Delete the sign and give it back to the player
-			giveSignBack( player, sign);
+			giveSignBack(player, sign);
 
 		} else
-			player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-lines"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
 
 	}
 
-	private void handleImport( Player player, Block bookcase, Block sign, String firstLine, String otherLines) {
+	private void handleImport(Player player, Block bookcase, Block sign, String firstLine, String otherLines) {
 		// String that is send to the database
 		String textToWrite = "";
 		// Name of the current world
@@ -218,169 +220,176 @@ public class IOBookcaseBlockListener implements Listener {
 		String txtColor = "";
 		// Stored the name of the case
 		String caseName = "";
-
+		
 		// import from text file
-		if( firstLine.contains( "@import")) {
+		if (firstLine.contains("@import")) {
+			
 			try {
+				
 				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-				Document doc = docBuilder.parse( plugin.getDataFolder() + File.separator + "import.xml");
+				Document doc = docBuilder.parse(plugin.getDataFolder() + File.separator + "import.xml");
 
 				// normalize text representation
 				doc.getDocumentElement().normalize();
 
-				NodeList cases = doc.getElementsByTagName( "case");
+				NodeList cases = doc.getElementsByTagName("case");
+
 
 				int numberOfCases = cases.getLength();
+				// System.out.println("Number of cases present: " + numberOfCases);
+				// System.out.println ("Root element: " + doc.getDocumentElement().getNodeName());
+				
+				for (int caseNum = 0; caseNum < numberOfCases; caseNum++) {
 
-				for( int caseNum = 0; caseNum < numberOfCases; caseNum++) {
-					Node caseNode = cases.item( caseNum);
+					Node caseNode = cases.item(caseNum);
 
-					if( caseNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element caseElement = ( Element) caseNode;
-						NodeList caseLineList = caseElement.getElementsByTagName( "line");
+					if (caseNode.getNodeType() == Node.ELEMENT_NODE) {
+
+						Element caseElement = (Element) caseNode;
+						NodeList caseLineList = caseElement.getElementsByTagName("line");
 
 						// Attribute in which the name of the case is stored
-						if( caseElement.hasAttributes()) {
+						if (caseElement.hasAttributes()) {
 							NamedNodeMap attrs = caseElement.getAttributes();
-							// Search for the name attribute and set the
-							// caseName
-							for( int i = 0; i < attrs.getLength(); i++) {
-								Attr attribute = ( Attr) attrs.item( i);
-								if( attribute.getName().equals( "name")) {
+							// Search for the name attribute and set the caseName
+							for (int i = 0; i < attrs.getLength(); i++) {
+								Attr attribute = (Attr) attrs.item(i);
+								if (attribute.getName().equals("name")) {
 									caseName = attribute.getValue();
 								}
 							}
 						}
 
-						for( int caseLineNum = 0; caseLineNum < caseLineList.getLength(); caseLineNum++) {
-							Element caseLine = ( Element) caseLineList.item( caseLineNum);
+						for (int caseLineNum = 0; caseLineNum < caseLineList.getLength(); caseLineNum++) {
+
+							Element caseLine = (Element) caseLineList.item(caseLineNum);
 							NodeList text = caseLine.getChildNodes();
 
 							// Get the text thats in the line
-							String txtLine = ( ( Node) text.item( 0)).getNodeValue().trim();
+							String txtLine = ((Node) text.item(0)).getNodeValue().trim();
 
 							// Get all attributes that are in the line element
-							if( caseLine.hasAttributes()) {
+							if (caseLine.hasAttributes()) {
 								NamedNodeMap attrs = caseLine.getAttributes();
 
-								if( otherLines.equals( caseName)) {
-									for( int u = 0; u < attrs.getLength(); u++) {
-										Attr attribute = ( Attr) attrs.item( u);
+								if (otherLines.equals(caseName)) {
+									for (int u = 0; u < attrs.getLength(); u++) {
+										Attr attribute = (Attr) attrs.item(u);
 
 										// Search for the num and color
-										if( attribute.getName().equals( "num")) {
+										if (attribute.getName().equals("num")) {
 											// Check if it is really a number
-											// if its not we improvise on the
-											// lineNumber
-											if( isIntNumber( attribute.getValue()))
-												lineNum = Integer.parseInt( attribute.getValue());
+											// if its not we improvise on the lineNumber
+											if (isIntNumber(attribute.getValue()))
+												lineNum = Integer.parseInt(attribute.getValue());
 											else
 												lineNum = caseLineNum;
-										} else if( attribute.getName().equals( "color"))
+										}
+										else if (attribute.getName().equals("color"))
 											txtColor = attribute.getValue();
 									}
-									if( lineNum < 11 && lineNum > 0) {
+									if (lineNum < 11 && lineNum > 0) {
 										// Build the text string for the import
-										textToWrite = getColor( txtColor, player) + txtLine;
-										// The text is safe to be send to the
-										// database
+										textToWrite = getColor(txtColor, player) + txtLine;
+										// The text is safe to be send to the database
 
-										connection.writeSql( textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
+										connection.writeSql(textToWrite, lineNum, worldName, bookcase.getX(), bookcase.getY(), bookcase.getZ());
 										found = true;
 									} else
-										player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-lines"));
+										player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-lines"));
 								}
 							}
 						}
 					}
 				}
-				if( found == false)
-					player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-error-import"));
+				if (found == false)
+					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-error-import"));
 				else
-					player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-notify-found"));
-
+					player.sendMessage(ChatColor.YELLOW + plugin.getConfig().getString("msg-notify-found"));
+				
 				// Delete the sign and give it back to the player
-				giveSignBack( player, sign);
+				giveSignBack(player, sign);
 
-			} catch( ParserConfigurationException e) {
+			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
-			} catch( SAXException e) {
+			} catch (SAXException e) {
 				e.printStackTrace();
-			} catch( IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private void giveSignBack( Player player, Block sign) {
-		sign.setType( Material.AIR);
+	private void giveSignBack(Player player, Block sign) {
+		sign.setType(Material.AIR);
 		ItemStack currentItem = player.getItemInHand();
-		currentItem.setType( Material.SIGN);
-		player.setItemInHand( currentItem);
+		currentItem.setType(Material.SIGN);
+		player.setItemInHand(currentItem);
 
 	}
 
-	private String getColor( String colorName, Player player) {
-		if( colorName.equalsIgnoreCase( "black"))
+	private String getColor(String colorName, Player player) {
+
+		if (colorName.equals("black"))
 			return "§0";
 		// BLACK
-		else if( colorName.equalsIgnoreCase( "navy"))
+		else if (colorName.equals("navy"))
 			return "§1";
 		// DARK_BLUE
-		else if( colorName.equalsIgnoreCase( "green"))
+		else if (colorName.equals("green"))
 			return "§2";
 		// DARK_GREEN
-		else if( colorName.equalsIgnoreCase( "blue"))
+		else if (colorName.equals("blue"))
 			return "§3";
 		// DARK_AQUA
-		else if( colorName.equalsIgnoreCase( "red"))
+		else if (colorName.equals("red"))
 			return "§4";
 		// DARK_RED
-		else if( colorName.equalsIgnoreCase( "purple"))
+		else if (colorName.equals("purple"))
 			return "§5";
 		// DARK_PURPLE
-		else if( colorName.equalsIgnoreCase( "gold"))
+		else if (colorName.equals("gold"))
 			return "§6";
 		// GOLD
-		else if( colorName.equalsIgnoreCase( "lightgray"))
+		else if (colorName.equals("lightgray"))
 			return "§7";
 		// GRAY
-		else if( colorName.equalsIgnoreCase( "gray"))
+		else if (colorName.equals("gray"))
 			return "§8";
 		// DARK_GRAY
-		else if( colorName.equalsIgnoreCase( "darkpurple"))
+		else if (colorName.equals("darkpurple"))
 			return "§9";
 		// BLUE
-		else if( colorName.equalsIgnoreCase( "lightgreen"))
+		else if (colorName.equals("lightgreen"))
 			return "§a";
 		// GREEN
-		else if( colorName.equalsIgnoreCase( "lightblue"))
+		else if (colorName.equals("lightblue"))
 			return "§b";
 		// AQUA
-		else if( colorName.equalsIgnoreCase( "rose"))
+		else if (colorName.equals("rose"))
 			return "§c";
 		// RED
-		else if( colorName.equalsIgnoreCase( "lightpurple"))
+		else if (colorName.equals("lightpurple"))
 			return "§d";
 		// LIGHT_PURPLE
-		else if( colorName.equalsIgnoreCase( "yellow"))
+		else if (colorName.equals("yellow"))
 			return "§e";
 		// YELLOW
-		else if( colorName.equalsIgnoreCase( "white"))
+		else if (colorName.equals("white"))
 			return "§f";
 		// WHITE
 		else {
 			// if a wrong color is passed we set the default to white
-			player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-color"));
+			player.sendMessage(ChatColor.RED + plugin.getConfig().getString("msg-error-color"));
 		}
 		return "§f";
 	}
 
-	public boolean isIntNumber( String num) {
+	public boolean isIntNumber(String num) {
 		try {
-			Integer.parseInt( num);
-		} catch( NumberFormatException e) {
+			Integer.parseInt(num);
+		} catch (NumberFormatException e) {
 			return false;
 		}
 		return true;
