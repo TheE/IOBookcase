@@ -78,12 +78,13 @@ public class IOBookcasePlayerListener implements Listener {
 			return;
 
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
-		player.sendMessage( ChatColor.GRAY + plugin.getConfig().getString( "msg-pick-book"));
 		
 		if( connection.checkCase( worldName, block.getX(), block.getY(), block.getZ())) {
+			player.sendMessage( ChatColor.GRAY + plugin.getConfig().getString( "msg-pick-book"));
 			connection.readCase( player, worldName, block.getX(), block.getY(), block.getZ());
 			
 		} else if( plugin.getConfig().getBoolean( "random-text")) {
+			player.sendMessage( ChatColor.GRAY + plugin.getConfig().getString( "msg-pick-book"));
 			player.sendMessage( ChatColor.YELLOW + this.getBookLine());
 		} else if( plugin.getConfig().getBoolean( "send-msg-on-empty")) {
 			player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-empty-bookcase"));
