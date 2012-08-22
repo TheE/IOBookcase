@@ -134,6 +134,24 @@ public class IOBookcaseDatabase {
 		}
 	}
 
+	public void updateCase( String world, int oldX, int oldY, int oldZ, int x, int y, int z) {
+
+		try {
+			statement = connection.createStatement();
+
+			statement.executeUpdate( "UPDATE bookshelf SET `locx`='" + x + ", `locy`='" + y + ",`locz`='" + z + ", ' WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z + ";");
+
+		} catch( SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				statement.close();
+			} catch( SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public boolean createDatabase() {
 		try {
 			statement = connection.createStatement();
