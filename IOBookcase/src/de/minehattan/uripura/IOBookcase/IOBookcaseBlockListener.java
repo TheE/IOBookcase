@@ -94,9 +94,9 @@ public class IOBookcaseBlockListener implements Listener {
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
 
 		try {
-			int x = event.getBlock().getX();
-			int y = event.getBlock().getY();
-			int z = event.getBlock().getZ();
+			int x = block.getX();
+			int y = block.getY();
+			int z = block.getZ();
 
 			checkcase = connection.checkCase( worldName, x, y, z);
 
@@ -107,7 +107,6 @@ public class IOBookcaseBlockListener implements Listener {
 			}
 			if( plugin.getConfig().getBoolean( "drop-bookcase")) {
 				// We cancel the event and drop a normal bookcase
-
 				event.setCancelled( true);
 				block.setType( Material.AIR);
 				if( event.getPlayer().getGameMode() != GameMode.CREATIVE) {
@@ -132,9 +131,9 @@ public class IOBookcaseBlockListener implements Listener {
 		IOBookcaseDatabase connection = new IOBookcaseDatabase();
 
 		try {
-			int x = event.getBlock().getX();
-			int y = event.getBlock().getY();
-			int z = event.getBlock().getZ();
+			int x = block.getX();
+			int y = block.getY();
+			int z = block.getZ();
 
 			checkcase = connection.checkCase( worldName, x, y, z);
 
