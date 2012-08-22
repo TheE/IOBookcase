@@ -139,6 +139,7 @@ public class IOBookcaseBlockListener implements Listener {
 
 			if( checkcase) {
 				connection.deleteCase( worldName, x, y, z);
+				plugin.warnMessage( "A Bookcase died in a fire at x:" + block.getX() + " y:" + block.getY() + " z:" + block.getZ());
 			}
 
 		} catch( Exception e) {
