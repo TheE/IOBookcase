@@ -85,7 +85,7 @@ public class IOBookcasePlayerListener implements Listener {
 			
 		} else if( plugin.getConfig().getBoolean( "random-text")) {
 			player.sendMessage( ChatColor.YELLOW + this.getBookLine());
-		} else if( plugin.getConfig().getBoolean( "random-text")) {
+		} else if( plugin.getConfig().getBoolean( "send-msg-on-empty")) {
 			player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-empty-bookcase"));
 		}
 		// Close the connection
