@@ -79,10 +79,12 @@ public class IOBookcaseBlockListener implements Listener {
 		if( firstLine.contains( "@line")) {
 			handleLine( player, block, firstLine, bufferText.toString());
 			// Delete the sign and give it back to the player
+			event.setCancelled( true);
 			giveSignBack( player, sign);
 		} else if( firstLine.contains( "@import")) {
 			handleImport( player, block, firstLine, bufferText.toString());
 			// Delete the sign and give it back to the player
+			event.setCancelled( true);
 			giveSignBack( player, sign);
 		} else
 			player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-format"));
