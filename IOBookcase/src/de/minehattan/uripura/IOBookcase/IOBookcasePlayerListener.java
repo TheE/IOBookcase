@@ -1,8 +1,10 @@
 package de.minehattan.uripura.IOBookcase;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.LineNumberReader;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
@@ -27,43 +29,29 @@ public class IOBookcasePlayerListener implements Listener {
 	}
 
 	protected String getBookLine() throws IOException {
-		RandomAccessFile file = new RandomAccessFile( new File( plugin.getDataFolder(), "books.txt"), "r");
-
-		long len = file.length();
-		byte[] data = new byte[500];
-
-		for( int tries = 0; tries < 3; tries++) {
-			int j = rand.nextInt( ( int) len);
-			if( tries == 2) { // File is too small
-				j = 0;
-			}
-			file.seek( j);
-			file.read( data);
-
-			StringBuilder buffer = new StringBuilder();
-			boolean found = j == 0;
-			byte last = 0;
-
-			for( int i = 0; i < data.length; i++) {
-				if( found) {
-					if( data[i] == 10 || data[i] == 13 || i >= len) {
-						if( last != 10 && last != 13) {
-							file.close();
-							return buffer.toString();
-						}
-					} else {
-						buffer.appendCodePoint( data[i]);
-					}
-				} else if( data[i] == 10 || data[i] == 13) { // Line feeds
-					found = true;
-				}
-
-				last = data[i];
-			}
+		// Number of lines
+		int lines;
+		// counter for the lines we passed
+		int passes = 0;
+		String line = null;
+		
+		// Get the number of lines
+		LineNumberReader lnr = new LineNumberReader( new FileReader( new File( plugin.getDataFolder() + File.separator, "books.txt")));
+		lnr.skip( Long.MAX_VALUE);
+		lines = lnr.getLineNumber();
+		lnr.close();
+		
+		// Choose a random number that is smaller than the number of lines
+		int toRead = new Random().nextInt( lines);
+		BufferedReader br = new BufferedReader( new FileReader( new File( plugin.getDataFolder() + File.separator, "books.txt")));
+		
+		while( ( line = br.readLine()) != null) {
+			passes++;
+			if( passes > toRead)
+				break;
 		}
-
-		file.close();
-		return null;
+		br.close();
+		return line;
 	}
 
 	@EventHandler( priority = EventPriority.MONITOR)
