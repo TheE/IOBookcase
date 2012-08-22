@@ -46,13 +46,13 @@ public class IOBookcase extends JavaPlugin {
 		createDatabase();
 		createBookFile();
 
-		this.logMessage( "Version" + pdFile.getVersion() + "Enabeld");
+		this.logMessage( "Version " + pdFile.getVersion() + " Enabeld");
 	}
 
 	public void onDisable() {
 		PluginDescriptionFile pdFile = this.getDescription();
 		
-		this.logMessage( "Version" + pdFile.getVersion() + "Disabeld");
+		this.logMessage( "Version " + pdFile.getVersion() + " Disabeld");
 	}
 
 	@Override

@@ -35,7 +35,6 @@ public class IOBookcaseDatabase {
 		String lineName = "line" + lineNum;
 
 		try {
-			// connection = DriverManager.getConnection( "jdbc:sqlite:plugins/IOBookcase/bookcase.db");
 			statement = connection.createStatement();
 			rs = statement.executeQuery( "SELECT `world` FROM `bookshelf` WHERE `world`='" + worldName + "' AND `locx` =" + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 
@@ -59,7 +58,6 @@ public class IOBookcaseDatabase {
 			try {
 				rs.close();
 				statement.close();
-				// connection.close();
 			} catch( SQLException e) {
 				e.printStackTrace();
 			}
@@ -71,23 +69,10 @@ public class IOBookcaseDatabase {
 		String sendback = null;
 
 		try {
-			// connection = DriverManager.getConnection( "jdbc:sqlite:plugins/IOBookcase/bookcase.db");
 			statement = connection.createStatement();
 
 			rs = statement.executeQuery( "SELECT `line1`, `line2`, `line3`, `line4`, `line5`, `line6`, `line7`, `line8`, `line9`, `line10` FROM `bookshelf` WHERE `world`='" + worldName + "' AND `locx` = " + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 
-			/*
-			sendback[0] = rs.getString( "line1");
-			sendback[1] = rs.getString( "line2");
-			sendback[2] = rs.getString( "line3");
-			sendback[3] = rs.getString( "line4");
-			sendback[4] = rs.getString( "line5");
-			sendback[5] = rs.getString( "line6");
-			sendback[6] = rs.getString( "line7");
-			sendback[7] = rs.getString( "line8");
-			sendback[8] = rs.getString( "line9");
-			sendback[9] = rs.getString( "line10");
-			*/
 			for( int i = 0; i < 10; i++) {
 				sendback = rs.getString( "line" + (i + 1));
 				if( sendback != null)
@@ -101,7 +86,6 @@ public class IOBookcaseDatabase {
 			try {
 				rs.close();
 				statement.close();
-				// connection.close();
 			} catch( SQLException e) {
 				e.printStackTrace();
 			}
@@ -125,7 +109,6 @@ public class IOBookcaseDatabase {
 			try {
 				rs.close();
 				statement.close();
-				// connection.close();
 			} catch( SQLException e) {
 				e.printStackTrace();
 			}
@@ -136,7 +119,6 @@ public class IOBookcaseDatabase {
 	public void deleteCase( String world, int x, int y, int z) {
 
 		try {
-			// connection = DriverManager.getConnection( "jdbc:sqlite:plugins/IOBookcase/bookcase.db");
 			statement = connection.createStatement();
 
 			statement.executeUpdate( "DELETE FROM bookshelf WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z);
@@ -146,7 +128,6 @@ public class IOBookcaseDatabase {
 		} finally {
 			try {
 				statement.close();
-				// connection.close();
 			} catch( SQLException e) {
 				e.printStackTrace();
 			}
@@ -168,7 +149,6 @@ public class IOBookcaseDatabase {
 		} finally {
 			try {
 				statement.close();
-				// connection.close();
 			} catch( SQLException e) {
 				e.printStackTrace();
 			}
