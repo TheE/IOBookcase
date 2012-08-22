@@ -55,10 +55,12 @@ public class IOBookcasePlayerListener implements Listener {
 			br.close();
 		} catch( FileNotFoundException e) {
 			plugin.errorMessage( "Unable to find books.txt");
-			e.printStackTrace();
+			return( ChatColor.RED + plugin.getConfig().getString( "msg-error-find-file"));
+			// e.printStackTrace();
 		} catch( IOException e) {
-			plugin.errorMessage( "Unable to find books.txt");
-			e.printStackTrace();
+			plugin.errorMessage( "Unable to read books.txt");
+			return( ChatColor.RED + plugin.getConfig().getString( "msg-error-fetch-line"));
+			// e.printStackTrace();
 		}
 		return line;
 	}
