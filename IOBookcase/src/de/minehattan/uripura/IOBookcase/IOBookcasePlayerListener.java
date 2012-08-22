@@ -34,7 +34,7 @@ public class IOBookcasePlayerListener implements Listener {
 		// counter for the lines we passed
 		int passes = 0;
 		String line = null;
-		
+
 		// Get the number of lines
 		LineNumberReader lnr;
 		try {
@@ -42,11 +42,11 @@ public class IOBookcasePlayerListener implements Listener {
 			lnr.skip( Long.MAX_VALUE);
 			lines = lnr.getLineNumber();
 			lnr.close();
-			
+
 			// Choose a random number that is smaller than the number of lines
 			int toRead = new Random().nextInt( lines);
 			BufferedReader br = new BufferedReader( new FileReader( new File( plugin.getDataFolder() + File.separator, "books.txt")));
-			
+
 			while( ( line = br.readLine()) != null) {
 				passes++;
 				if( passes > toRead)
@@ -84,15 +84,10 @@ public class IOBookcasePlayerListener implements Listener {
 			connection.readCase( player, worldName, block.getX(), block.getY(), block.getZ());
 			
 		} else if( plugin.getConfig().getBoolean( "random-text")) {
-			try {
-				player.sendMessage( ChatColor.YELLOW + this.getBookLine());
-			} catch( IOException e) {
-				// Inform the serveradmin, and the player
-				plugin.errorMessage( plugin.getConfig().getString( "msg-error-fetch-line"));
-				player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-fetch-line"));
-			}
-		} else
+			player.sendMessage( ChatColor.YELLOW + this.getBookLine());
+		} else if( plugin.getConfig().getBoolean( "random-text")) {
 			player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-empty-bookcase"));
+		}
 		// Close the connection
 		connection.closeConnection();
 	}
