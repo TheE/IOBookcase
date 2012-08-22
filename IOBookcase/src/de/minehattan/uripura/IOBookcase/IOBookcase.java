@@ -34,7 +34,7 @@ public class IOBookcase extends JavaPlugin {
 		// create the folder if it doesn't exist
 		createFolder();
 		
-		// Set the name for the configfile
+		// Set the name for the config file
 		configFile = new File( pluginFolder, "config.yml");
 		
 		// create it
@@ -125,7 +125,7 @@ public class IOBookcase extends JavaPlugin {
 			this.logMessage( "import.xml does not exist. Creating...");
 			try {
 				importFile.createNewFile();
-				this.logMessage( "File created!");
+				this.logMessage( "import.xml created!");
 			} catch( IOException e) {
 				this.errorMessage( "Cannot create File " + importFile.getPath() + File.separator + "import.xml");
 			}
@@ -155,12 +155,10 @@ public class IOBookcase extends JavaPlugin {
 				} finally {
 					try {
 						input.close();
-					} catch( IOException e) {
-					}
-					try {
 						if( output != null)
 							output.close();
 					} catch( IOException e) {
+						this.errorMessage( "Unable to close books.txt");
 					}
 				}
 			}
