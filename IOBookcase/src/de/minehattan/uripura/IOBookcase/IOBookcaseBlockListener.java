@@ -77,9 +77,13 @@ public class IOBookcaseBlockListener implements Listener {
 
 		// Check if the first line contains @line or @import
 		if( firstLine.contains( "@line")) {
-			handleLine( player, block, sign, firstLine, bufferText.toString());
+			handleLine( player, block, firstLine, bufferText.toString());
+			// Delete the sign and give it back to the player
+			giveSignBack( player, sign);
 		} else if( firstLine.contains( "@import")) {
-			handleImport( player, block, sign, firstLine, bufferText.toString());
+			handleImport( player, block, firstLine, bufferText.toString());
+			// Delete the sign and give it back to the player
+			giveSignBack( player, sign);
 		} else
 			player.sendMessage( ChatColor.RED + plugin.getConfig().getString( "msg-error-format"));
 	}
@@ -209,7 +213,7 @@ public class IOBookcaseBlockListener implements Listener {
 		}
 	}
 	
-	private void handleLine( Player player, Block block, Block sign, String firstLine, String otherLines) {
+	private void handleLine( Player player, Block block, String firstLine, String otherLines) {
 		// Line number in the bookcase
 		int lineNum = 1;
 		// Color of the line (default = white)
@@ -257,8 +261,6 @@ public class IOBookcaseBlockListener implements Listener {
 			connection.writeSql( textToWrite, lineNum, worldName, block.getX(), block.getY(), block.getZ());
 			player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-notify-written") + " " + lineNum);
 
-			// Delete the sign and give it back to the player
-			giveSignBack( player, sign);
 			// Finally close the Connection
 			connection.closeConnection();
 
@@ -267,7 +269,7 @@ public class IOBookcaseBlockListener implements Listener {
 
 	}
 
-	private void handleImport( Player player, Block bookcase, Block sign, String firstLine, String otherLines) {
+	private void handleImport( Player player, Block bookcase, String firstLine, String otherLines) {
 		// String that is send to the database
 		String textToWrite = "";
 		// Name of the current world
@@ -362,9 +364,6 @@ public class IOBookcaseBlockListener implements Listener {
 					player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-error-import"));
 				else
 					player.sendMessage( ChatColor.YELLOW + plugin.getConfig().getString( "msg-notify-found"));
-
-				// Delete the sign and give it back to the player
-				giveSignBack( player, sign);
 
 			} catch( ParserConfigurationException e) {
 				e.printStackTrace();
