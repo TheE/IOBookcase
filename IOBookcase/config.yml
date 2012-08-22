@@ -19,5 +19,5 @@ msg-error-exeption: 'Unable to write text: '
 msg-error-color: 'You selected a none valid color: Defaulting to white.'
 msg-error-import: 'Could not find the case''s name, make sure your format is correct.'
 msg-error-to-few-arguments: 'To few Arguments. Try again.'
-msg-error-find-file: Unable to find the import.xml. Please contat the serveradmin.
+msg-error-find-file: Unable to find the import.xml. Please contact the serveradmin.
 msg-error-fetch-line: Failed to fetch a line from the books file.
