@@ -92,13 +92,13 @@ public class IOBookcaseDatabase {
 		}
 	}
 
-	public boolean checkCase( String world, int x, int y, int z) {
+	public boolean checkCase( String worldName, int x, int y, int z) {
 
 		boolean check = false;
 
 		try {
 			statement = connection.createStatement();
-			rs = statement.executeQuery( "SELECT `world` FROM `bookshelf` WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
+			rs = statement.executeQuery( "SELECT `world` FROM `bookshelf` WHERE `world`='" + worldName + "' AND `locx`=" + x + " AND `locy` = " + y + " AND `locz` = " + z + ";");
 
 			if( rs.isBeforeFirst() != false)
 				check = true;
@@ -116,12 +116,12 @@ public class IOBookcaseDatabase {
 		return check;
 	}
 
-	public void deleteCase( String world, int x, int y, int z) {
+	public void deleteCase( String worldName, int x, int y, int z) {
 
 		try {
 			statement = connection.createStatement();
 
-			statement.executeUpdate( "DELETE FROM bookshelf WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z);
+			statement.executeUpdate( "DELETE FROM bookshelf WHERE `world`='" + worldName + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z);
 
 		} catch( SQLException e) {
 			e.printStackTrace();
@@ -134,12 +134,12 @@ public class IOBookcaseDatabase {
 		}
 	}
 
-	public void updateCase( String world, int oldX, int oldY, int oldZ, int x, int y, int z) {
+	public void updateCase( String worldName, int oldX, int oldY, int oldZ, int x, int y, int z) {
 
 		try {
 			statement = connection.createStatement();
 
-			statement.executeUpdate( "UPDATE bookshelf SET `locx`='" + x + ", `locy`='" + y + ",`locz`='" + z + ", ' WHERE `world`='" + world + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z + ";");
+			statement.executeUpdate( "UPDATE bookshelf SET `locx`=" + x + ", `locy`=" + y + ",`locz`=" + z + ", ' WHERE `world`='" + worldName + "' AND `locx`=" + x + " AND `locy`=" + y + " AND `locz`=" + z + ";");
 
 		} catch( SQLException e) {
 			e.printStackTrace();
