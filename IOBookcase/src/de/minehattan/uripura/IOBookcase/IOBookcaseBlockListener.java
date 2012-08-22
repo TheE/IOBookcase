@@ -380,10 +380,19 @@ public class IOBookcaseBlockListener implements Listener {
 	}
 
 	private void giveSignBack( Player player, Block sign) {
-		sign.setType( Material.AIR);
 		ItemStack currentItem = player.getItemInHand();
-		currentItem.setType( Material.SIGN);
-		player.setItemInHand( currentItem);
+		int amount = currentItem.getAmount();
+		
+		// Destroy the sign
+		sign.setType( Material.AIR);
+		
+		// If the player had more than 1 sign we restore the original stack + 1
+		if( amount >= 1)
+			currentItem.setAmount( amount + 1);
+		else {
+			currentItem.setType( Material.SIGN);
+			player.setItemInHand( currentItem);
+		}
 
 	}
 
