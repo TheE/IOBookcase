@@ -11,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.xml.sax.SAXException;
@@ -139,7 +141,7 @@ public class IOBookcaseBlockListener implements Listener {
 
 			if( checkcase) {
 				connection.deleteCase( worldName, x, y, z);
-				plugin.warnMessage( "A Bookcase died in a fire at x:" + block.getX() + " y:" + block.getY() + " z:" + block.getZ());
+				plugin.warnMessage( "A Bookcase died in a fire in " + worldName + " at x:" + x + " y:" + y + " z:" + z);
 			}
 
 		} catch( Exception e) {
@@ -149,8 +151,66 @@ public class IOBookcaseBlockListener implements Listener {
 		}
 	}
 
+	@EventHandler( priority = EventPriority.MONITOR)
+	public void onBlockPistonExtend( BlockPistonExtendEvent event) {
+		Block block = event.getBlock();
+		boolean checkcase = false;
+		String worldName = block.getWorld().getName();
+
+		if( block.getType() != Material.BOOKSHELF || event.isCancelled())
+			return;
+
+		IOBookcaseDatabase connection = new IOBookcaseDatabase();
+
+		try {
+			int x = block.getX();
+			int y = block.getY();
+			int z = block.getZ();
+
+			checkcase = connection.checkCase( worldName, x, y, z);
+
+			if( checkcase) {
+				plugin.warnMessage( "A Bookcase was moved in " + worldName + " at x:" + x + " y:" + y + " z:" + z);
+			}
+
+		} catch( Exception e) {
+			plugin.errorMessage( "Unable to update a bookcase on a PistonExtendEvent");
+		} finally {
+			connection.closeConnection();
+		}
+	}
+	
+	@EventHandler( priority = EventPriority.MONITOR)
+	public void onBlockPistonRetract( BlockPistonRetractEvent event) {
+		Block block = event.getBlock();
+		boolean checkcase = false;
+		String worldName = block.getWorld().getName();
+		
+		if( block.getType() != Material.BOOKSHELF || event.isCancelled())
+			return;
+		
+		IOBookcaseDatabase connection = new IOBookcaseDatabase();
+
+		try {
+			int x = block.getX();
+			int y = block.getY();
+			int z = block.getZ();
+
+			checkcase = connection.checkCase( worldName, x, y, z);
+
+			if( checkcase) {
+				plugin.warnMessage( "A Bookcase was moved in " + worldName + " at x:" + x + " y:" + y + " z:" + z);
+			}
+
+		} catch( Exception e) {
+			plugin.errorMessage( "Unable to update a bookcase on a PistonRetractEvent");
+		} finally {
+			connection.closeConnection();
+		}
+	}
+	
 	private void handleLine( Player player, Block block, Block sign, String firstLine, String otherLines) {
-		// Linenumber in the bookcase
+		// Line number in the bookcase
 		int lineNum = 1;
 		// Color of the line (default = white)
 		String lineColor = "§f";
