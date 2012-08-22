@@ -2,7 +2,7 @@
 # -----
 # drop-bookcase: Controls if destroyed bookcases are dropped
 # random-text: Controls if empty bookcases issues random text taken from the books.txt
-# send-msg-on-empty: Controls weather 'msg-empty-bookcase' should be send or not
+# send-msg-on-empty: Controls whether 'msg-empty-bookcase' should be send or not
 # -----
 # You may configure every message the plugin issues below.
 drop-bookcase: true
