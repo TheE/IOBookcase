@@ -52,17 +52,17 @@ public class IOBookcaseBlockListener implements Listener {
 			return;
 
 		// Check if the Sign was placed on one of the Sides...
-		if( event.getBlock().getRelative( BlockFace.NORTH).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.NORTH);
+		if( block.getRelative( BlockFace.NORTH).getType() == Material.BOOKSHELF) {
+			block = block.getRelative( BlockFace.NORTH);
 			signOnCase = true;
-		} else if( event.getBlock().getRelative( BlockFace.EAST).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.EAST);
+		} else if( block.getRelative( BlockFace.EAST).getType() == Material.BOOKSHELF) {
+			block = block.getRelative( BlockFace.EAST);
 			signOnCase = true;
-		} else if( event.getBlock().getRelative( BlockFace.SOUTH).getType() == Material.BOOKSHELF) {
+		} else if( block.getRelative( BlockFace.SOUTH).getType() == Material.BOOKSHELF) {
 			block = event.getBlock().getRelative( BlockFace.SOUTH);
 			signOnCase = true;
-		} else if( event.getBlock().getRelative( BlockFace.WEST).getType() == Material.BOOKSHELF) {
-			block = event.getBlock().getRelative( BlockFace.WEST);
+		} else if( block.getRelative( BlockFace.WEST).getType() == Material.BOOKSHELF) {
+			block = block.getRelative( BlockFace.WEST);
 			signOnCase = true;
 		}
 		// ...if not: stop here
